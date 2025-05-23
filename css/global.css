@@ -1,0 +1,48 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 6px;
+  color: #000000;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.input-group .error {
+  color: red;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.btn.primary {
+  background-color: #0ea5e9;
+  border-color: #0ea5e9;
+  color: white;
+}
+
+.btn.outline {
+  background-color: white;
+  border-color: #0ea5e9;
+  color: #0ea5e9;
+}
+
+.btn.text {
+  background-color: white;
+  border-color: white;
+  color: #0ea5e9;
+}

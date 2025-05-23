@@ -2,13 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>User Registration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./css/global.css" rel="stylesheet" />
+    <title>User Login | Forum</title>
     <style>
       body {
         background: #f4f6f8;
       }
-      .register-container {
+
+      .login-container {
         background: #fff;
         max-width: 400px;
         margin: 60px auto;
@@ -16,46 +18,17 @@
         border-radius: 8px;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
       }
-      .register-container h2 {
-        margin-bottom: 24px;
-        text-align: center;
-        color: #333;
-      }
-      .input-group {
+
+      .login-container .input-group {
         margin-bottom: 18px;
-      }
-      .input-group .error {
-        color: red;
-      }
-      .input-group label {
-        display: block;
-        margin-bottom: 6px;
-        color: #000000;
-      }
-      .input-group input {
-        width: 100%;
-        padding: 10px 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 1rem;
       }
     </style>
   </head>
   <body>
-    <form onsubmit="handleSubmit(event)">
+    <form class="login-container" onsubmit="handleSubmit(event)">
       <div class="input-group">
         <label for="username">Username</label>
         <input name="username" type="text" />
-        <p class="error"></p>
-      </div>
-      <div class="input-group">
-        <label for="email">Email</label>
-        <input name="email" type="email" />
-        <p class="error"></p>
-      </div>
-      <div class="input-group">
-        <label for="name">Name</label>
-        <input name="name" type="text" />
         <p class="error"></p>
       </div>
       <div class="input-group">
@@ -63,8 +36,9 @@
         <input name="password" type="password" />
         <p class="error"></p>
       </div>
-      <button type="submit" class="register-btn">Register</button>
+      <button type="submit" class="btn primary">Login</button>
     </form>
+
     <script>
       async function handleSubmit(event) {
         event.preventDefault();
@@ -72,12 +46,10 @@
 
         const data = {
           username: formData.get("username"),
-          name: formData.get("name"),
-          email: formData.get("email"),
           password: formData.get("password"),
         };
 
-        const { error } = await register(data);
+        const { error } = await login(data);
 
         if (error && error.fields) {
           const errorFields = Object.entries(error.fields);
@@ -91,17 +63,17 @@
         }
       }
 
-      async function register(data) {
+      async function login(data) {
         try {
           const response = await fetch(
-            "http://127.0.0.1:5000/auth/user/register",
+            "http://127.0.0.1:5000/auth/user/login",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               credentials: "include",
-
+              // allow HTTP Only Set-Cookie to be forwarded from API Server to client and from client to API Server
               body: JSON.stringify(data),
             }
           );

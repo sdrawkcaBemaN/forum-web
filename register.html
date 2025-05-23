@@ -2,25 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <title>User Registration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>User Login | Forum</title>
+    <link href="./css/global.css" rel="stylesheet" />
     <style>
-      .input-group label {
-        display: block;
-        margin-bottom: 6px;
-        color: #000000;
-      }
-      .input-group input {
-        width: 100%;
-        padding: 10px 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 1rem;
-      }
-
       body {
         background: #f4f6f8;
       }
+
       .register-container {
         background: #fff;
         max-width: 400px;
@@ -29,16 +18,33 @@
         border-radius: 8px;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
       }
-      .input-group .error {
-        color: red;
+
+      .register-container h2 {
+        margin-bottom: 24px;
+        text-align: center;
+        color: #333;
+      }
+
+      .register-container .input-group {
+        margin-bottom: 18px;
       }
     </style>
   </head>
   <body>
-    <form onsubmit="handleSubmit(event)">
+    <form class="register-container" onsubmit="handleSubmit(event)">
       <div class="input-group">
         <label for="username">Username</label>
         <input name="username" type="text" />
+        <p class="error"></p>
+      </div>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input name="email" type="email" />
+        <p class="error"></p>
+      </div>
+      <div class="input-group">
+        <label for="name">Name</label>
+        <input name="name" type="text" />
         <p class="error"></p>
       </div>
       <div class="input-group">
@@ -46,9 +52,8 @@
         <input name="password" type="password" />
         <p class="error"></p>
       </div>
-      <button type="submit">Login</button>
+      <button type="submit" class="btn primary">Register</button>
     </form>
-
     <script>
       async function handleSubmit(event) {
         event.preventDefault();
@@ -56,10 +61,12 @@
 
         const data = {
           username: formData.get("username"),
+          name: formData.get("name"),
+          email: formData.get("email"),
           password: formData.get("password"),
         };
 
-        const { error } = await login(data);
+        const { error } = await register(data);
 
         if (error && error.fields) {
           const errorFields = Object.entries(error.fields);
@@ -73,17 +80,16 @@
         }
       }
 
-      async function login(data) {
+      async function register(data) {
         try {
           const response = await fetch(
-            "http://127.0.0.1:5000/auth/user/login",
+            "http://127.0.0.1:5000/auth/user/register",
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               credentials: "include",
-              // allow HTTP Only Set-Cookie to be forwarded from API Server to client and from client to API Server
               body: JSON.stringify(data),
             }
           );
