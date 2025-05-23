@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        background: #f4f6f8;
+      }
+      .register-container {
+        background: #fff;
+        max-width: 400px;
+        margin: 60px auto;
+        padding: 32px 24px;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      }
+      .register-container h2 {
+        margin-bottom: 24px;
+        text-align: center;
+        color: #333;
+      }
+      .input-group {
+        margin-bottom: 18px;
+      }
+      .input-group .error {
+        color: red;
+      }
+      .input-group label {
+        display: block;
+        margin-bottom: 6px;
+        color: #000000;
+      }
+      .input-group input {
+        width: 100%;
+        padding: 10px 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <form onsubmit="handleSubmit(event)">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input name="username" type="text" />
+        <p class="error"></p>
+      </div>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input name="email" type="email" />
+        <p class="error"></p>
+      </div>
+      <div class="input-group">
+        <label for="name">Name</label>
+        <input name="name" type="text" />
+        <p class="error"></p>
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input name="password" type="password" />
+        <p class="error"></p>
+      </div>
+      <button type="submit" class="register-btn">Register</button>
+    </form>
+    <script>
+      async function handleSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        const data = {
+          username: formData.get("username"),
+          name: formData.get("name"),
+          email: formData.get("email"),
+          password: formData.get("password"),
+        };
+
+        const { error } = await register(data);
+
+        if (error && error.fields) {
+          const errorFields = Object.entries(error.fields);
+          for (let i = 0; i < errorFields.length; i++) {
+            const [key, value] = errorFields[i];
+
+            document.querySelector(
+              `.input-group input[name='${key}'] + .error`
+            ).innerHTML = value;
+          }
+        }
+      }
+
+      async function register(data) {
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:5000/auth/user/register",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+
+              body: JSON.stringify(data),
+            }
+          );
+
+          console.log(response.status);
+          console.log(response.headers.entries());
+
+          if (response.ok) {
+            return {
+              error: null,
+              data: null,
+            };
+          } else {
+            const error = await response.json();
+            return {
+              error: error.error,
+              data: null,
+            };
+          }
+        } catch (error) {
+          return {
+            error: error.message,
+            data: null,
+          };
+        }
+      }
+    </script>
+  </body>
+</html>
