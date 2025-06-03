@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./css/global.css" rel="stylesheet" />
+    <title>User Web | Forum</title>
+    <style>
+      body {
+        background: #f4f6f8;
+      }
+
+      .home-container {
+        background: #fff;
+        max-width: 400px;
+        margin: 60px auto;
+        padding: 32px 24px;
+        border-radius: 8px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="home-container">
+        <h1>Hello <span id="user"></span></h1>
+        <button class="btn primary" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <script type="module">
+      import { checkAuth } from "./src/check-auth.js";
+      import { logout as logoutfn } from "./src/api/auth.js";
+
+      const userRef = document.getElementById("user");
+
+      window.onload = async function () {
+        const user = await checkAuth(["verified"]);
+
+        if (user) {
+          userRef.innerHTML = user.name;
+        }
+      };
+
+      window.logout = async function () {
+        const { error } = await logoutfn();
+
+        if (!error) {
+          window.location.href = "./login.html";
+        }
+      };
+    </script>
+  </body>
+</html>
