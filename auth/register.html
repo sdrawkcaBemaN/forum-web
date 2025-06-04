@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>User Registration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="./css/global.css" rel="stylesheet" />
+    <link href="../css/global.css" rel="stylesheet" />
     <style>
       body {
         background: #f4f6f8;
@@ -54,7 +54,9 @@
       </div>
       <button type="submit" class="btn primary">Register</button>
     </form>
-    <script>
+    <script type="module">
+      import { register } from "../src/api/auth.js";
+
       async function handleSubmit(event) {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -80,42 +82,7 @@
         }
       }
 
-      async function register(data) {
-        try {
-          const response = await fetch(
-            "http://127.0.0.1:5000/auth/user/register",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              credentials: "include",
-              body: JSON.stringify(data),
-            }
-          );
-
-          console.log(response.status);
-          console.log(response.headers.entries());
-
-          if (response.ok) {
-            return {
-              error: null,
-              data: null,
-            };
-          } else {
-            const error = await response.json();
-            return {
-              error: error.error,
-              data: null,
-            };
-          }
-        } catch (error) {
-          return {
-            error: error.message,
-            data: null,
-          };
-        }
-      }
+      window.handleSubmit = handleSubmit;
     </script>
   </body>
 </html>
