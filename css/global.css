@@ -1,6 +1,6 @@
 body {
-        background: #f4f6f8;
-      }
+  background: #f4f6f8;
+}
 
 * {
   margin: 0;
@@ -8,17 +8,17 @@ body {
 }
 
 .container {
-        background: #fff;
-        max-width: 400px;
-        margin: 60px auto;
-        padding: 32px 24px;
-        border-radius: 8px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-      }
+  background: #fff;
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 32px 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
 
-      .container .input-group {
-        margin-bottom: 18px;
-      }
+.container .input-group {
+  margin-bottom: 18px;
+}
 
 .input-group label {
   display: block;
@@ -63,4 +63,3 @@ body {
   border-color: white;
   color: #0ea5e9;
 }
-

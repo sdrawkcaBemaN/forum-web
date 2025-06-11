@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="../css/global.css" rel="stylesheet" />
     <title>Account Verification | Forum</title>
-    
   </head>
   <body>
-      <form class="container">
+    <form class="container">
       <div class="input-group">
         <label for="email">Email</label>
         <input name="email" type="text" readonly />
         <p class="error"></p>
       </div>
 
-      <button type="submit" class="btn primary">Resend Verification Email</button>
+      <button type="submit" class="btn primary">
+        Resend Verification Email
+      </button>
     </form>
-
 
     <script type="module">
       import { resendVerificationLink } from "../src/api/auth.js";
@@ -27,7 +27,7 @@
       const emailInput = document.querySelector("input[name='email']");
       emailInput.value = email;
       console.log(email);
-      
+
       if (!email) {
         alert("Email not found in URL.");
         window.location.href = "./register.html";
@@ -37,28 +37,26 @@
 
       const form = document.querySelector("form");
 
-
       async function handleSubmit(event) {
-      event.preventDefault();
+        event.preventDefault();
 
-      const { error } = await resendVerificationLink({email});
+        const { error } = await resendVerificationLink({ email });
 
-      if (error && error.fields) {
+        if (error && error.fields) {
           const errorFields = Object.entries(error.fields);
           for (const [key, value] of errorFields) {
             document.querySelector(
               `.input-group input[name='${key}'] + .error`
             ).innerHTML = value;
           }
+        } else if (error && error.message) {
+          alert(error.message);
         } else {
           alert("Verification email has been sent!");
         }
       }
-        
-  
-      
+
       form.addEventListener("submit", handleSubmit);
-      
     </script>
   </body>
 </html>
