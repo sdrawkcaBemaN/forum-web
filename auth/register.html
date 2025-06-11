@@ -5,33 +5,10 @@
     <title>User Registration</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="../css/global.css" rel="stylesheet" />
-    <style>
-      body {
-        background: #f4f6f8;
-      }
-
-      .register-container {
-        background: #fff;
-        max-width: 400px;
-        margin: 60px auto;
-        padding: 32px 24px;
-        border-radius: 8px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-      }
-
-      .register-container h2 {
-        margin-bottom: 24px;
-        text-align: center;
-        color: #333;
-      }
-
-      .register-container .input-group {
-        margin-bottom: 18px;
-      }
-    </style>
+  
   </head>
   <body>
-    <form class="register-container" onsubmit="handleSubmit(event)">
+    <form class="container" onsubmit="handleSubmit(event)">
       <div class="input-group">
         <label for="username">Username</label>
         <input name="username" type="text" />
@@ -52,6 +29,11 @@
         <input name="password" type="password" />
         <p class="error"></p>
       </div>
+      <div style="display: flex; gap: 185px; margin-bottom: 18px; text-align: right">
+        <a href="./login.html" style="color: #007bff; display: block; text-align: left;"
+          >Login  
+        </a>
+        </div>
       <button type="submit" class="btn primary">Register</button>
     </form>
     <script type="module">
@@ -79,6 +61,9 @@
               `.input-group input[name='${key}'] + .error`
             ).innerHTML = value;
           }
+        }else{
+          window.location.href = `./account-verification.html?email=${encodeURIComponent(data.email)}`;
+
         }
       }
 
