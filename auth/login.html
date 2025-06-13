@@ -61,6 +61,8 @@
               `.input-group input[name='${key}'] + .error`
             ).innerHTML = value;
           }
+        } else if (error && error.message) {
+          alert(error.message);
         } else {
           window.location.href = "../home.html";
         }
