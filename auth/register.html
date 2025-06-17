@@ -15,13 +15,13 @@
         <p class="error"></p>
       </div>
       <div class="input-group">
-        <label for="email">Email</label>
-        <input name="email" type="email" />
+        <label for="name">Name</label>
+        <input name="name" type="text" />
         <p class="error"></p>
       </div>
       <div class="input-group">
-        <label for="name">Name</label>
-        <input name="name" type="text" />
+        <label for="email">Email</label>
+        <input name="email" type="email" />
         <p class="error"></p>
       </div>
       <div class="input-group">
@@ -65,7 +65,6 @@
           alert(error.message);
         } else{
           window.location.href = `./account-verification.html?email=${encodeURIComponent(data.email)}`;
-
         }
       }
 
