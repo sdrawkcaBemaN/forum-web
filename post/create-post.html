@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Create Post</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../css/global.css" rel="stylesheet" />
+  
+  </head>
+  <body>
+    <form class="container" onsubmit="handleSubmit(event)">
+      <div class="input-group">
+        <label for="title">Title</label>
+        <input name="title" type="text" />
+        <p class="error"></p>
+      </div>
+      <div class="input-group">
+        <label for="text">Text</label>
+        <textarea name="text" rows="5" style="resize: vertical; width: 100%;"></textarea>
+        <p class="error"></p>
+      </div>
+      <div class="input-group">
+        <label for="hyperlink">Hyperlink</label>
+        <input name="hyperlink" type="text" />
+        <p class="error"></p>
+      </div>
+      <div class="input-group">
+        <label for="tags">Tags</label>
+        <input name="tags" type="text" />
+        <p class="error"></p>
+      </div>
+      
+      <button type="submit" class="btn primary">Create Post</button>
+    </form>
+    <script type="module">
+      import { createPost } from "../src/api/posts.js";
+
+      async function handleSubmit(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        const data = {
+          title: formData.get("title"),
+          text: formData.get("text"),
+          hyperlink: formData.get("hyperlink"),
+          tags: formData.get("tags"),
+          post_id: null
+        };
+
+        const { error } = await createPost(data);
+
+        if (error && error.fields) {
+          const errorFields = Object.entries(error.fields);
+          for (let i = 0; i < errorFields.length; i++) {
+            const [key, value] = errorFields[i];
+
+            document.querySelector(
+              `.input-group input[name='${key}'] + .error`
+            ).innerHTML = value;
+          }
+        }else if (error && error.message) {
+          alert(error.message);
+        } else{
+          alert("Post created");
+          window.location.href = "../home.html";
+        }
+      }
+
+      window.handleSubmit = handleSubmit;
+    </script>
+  </body>
+</html>

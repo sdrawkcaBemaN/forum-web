@@ -7,10 +7,16 @@ body {
   box-sizing: border-box;
 }
 
+.post-box{
+  max-width: 400px; 
+  margin: 8px auto 12px; 
+  padding: 0 24px;
+}
+
 .container {
   background: #fff;
   max-width: 400px;
-  margin: 60px auto;
+  margin: 16px auto;
   padding: 32px 24px;
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -46,16 +52,23 @@ body {
   font-size: 1rem;
 }
 
+.btn.group{
+  display: flex; 
+  gap: 100px;
+}
+
 .btn.primary {
   background-color: #0ea5e9;
   border-color: #0ea5e9;
   color: white;
+  cursor: pointer;
 }
 
 .btn.outline {
   background-color: white;
   border-color: #0ea5e9;
   color: #0ea5e9;
+  cursor: pointer;
 }
 
 .btn.text {

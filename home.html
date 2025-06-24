@@ -9,15 +9,28 @@
   </head>
   <body>
     <header>
-      <div class="container">
+      <div class="container" >
         <h1>Hello <span id="user"></span></h1>
-        <button class="btn primary" onclick="logout()">Logout</button>
+
+        <div class="btn group">
+          <button class="btn primary"  onclick="logout()">Logout</button>
+          <button class="btn outline" onclick="createPost()">Post</button>
+        </div>
       </div>
     </header>
 
+    
+    <div class="post-box">
+      <h2>Posts</h2>
+      <hr />
+    </div>
+    <main class="container">
+      <div id="post-list"></div>
+    </main>
     <script type="module">
       import { checkAuth } from "./src/check-auth.js";
-      import { logout as logoutfn } from "./src/api/auth.js";
+      import { logout } from "./src/api/auth.js";
+      import { getAll as getPosts} from "./src/api/posts.js"
 
 
       const userRef = document.getElementById("user");
@@ -30,15 +43,42 @@
         }else{
           window.location.href = "./auth/login.html";
         }
+
+        await loadPosts()
       };
 
+      window.loadPosts = async function (){
+        const { error, data } = await getPosts();
+        const postList = document.getElementById("post-list");
+        //**************************************************************
+
+        if (error || !data) {
+          postList.innerHTML = "<p>Failed to load posts.</p>";
+          return;
+        }
+        postList.innerHTML = "";
+        for (const post of data) {
+          const div = document.createElement("div");
+          div.innerHTML = `
+            <h3>${post.title}</h3>
+            <p>${post.text}</p>
+            <p>${post.tags}</p>
+          `;
+          postList.appendChild(div);
+        }
+      }
+
       window.logout = async function () {
-        const { error } = await logoutfn();
+        const { error } = await logout();
 
         if (!error) {
           window.location.href = "./auth/login.html";
         }
       };
+
+      window.createPost = function (){
+        window.location.href = "./post/create-post.html";
+      }
     </script>
   </body>
 </html>
