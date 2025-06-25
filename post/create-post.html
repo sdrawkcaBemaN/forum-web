@@ -58,9 +58,17 @@
           for (let i = 0; i < errorFields.length; i++) {
             const [key, value] = errorFields[i];
 
-            document.querySelector(
-              `.input-group input[name='${key}'] + .error`
-            ).innerHTML = value;
+            const inputElement =
+              document.querySelector(
+                `.input-group input[name='${key}'] + .error`
+              ) ||
+              document.querySelector(
+                `.input-group textarea[name='${key}'] + .error`
+              );
+
+            if (inputElement) {
+              inputElement.innerHTML = value;
+            }
           }
         } else if (error && error.message) {
           alert(error.message);
