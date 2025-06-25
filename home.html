@@ -5,21 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="./css/global.css" rel="stylesheet" />
     <title>User Web | Forum</title>
-    
   </head>
   <body>
     <header>
-      <div class="container" >
+      <div class="container">
         <h1>Hello <span id="user"></span></h1>
 
         <div class="btn group">
-          <button class="btn primary"  onclick="logout()">Logout</button>
+          <button class="btn primary" onclick="logout()">Logout</button>
           <button class="btn outline" onclick="createPost()">Post</button>
         </div>
       </div>
     </header>
 
-    
     <div class="post-box">
       <h2>Posts</h2>
       <hr />
@@ -30,8 +28,7 @@
     <script type="module">
       import { checkAuth } from "./src/check-auth.js";
       import { logout } from "./src/api/auth.js";
-      import { getAll as getPosts} from "./src/api/posts.js"
-
+      import { getAll as getPosts } from "./src/api/posts.js";
 
       const userRef = document.getElementById("user");
 
@@ -40,14 +37,14 @@
 
         if (user) {
           userRef.innerHTML = user.name;
-        }else{
+        } else {
           window.location.href = "./auth/login.html";
         }
 
-        await loadPosts()
+        await loadPosts();
       };
 
-      window.loadPosts = async function (){
+      window.loadPosts = async function () {
         const { error, data } = await getPosts();
         const postList = document.getElementById("post-list");
         //**************************************************************
@@ -66,7 +63,7 @@
           `;
           postList.appendChild(div);
         }
-      }
+      };
 
       window.logout = async function () {
         const { error } = await logout();
@@ -76,9 +73,9 @@
         }
       };
 
-      window.createPost = function (){
+      window.createPost = function () {
         window.location.href = "./post/create-post.html";
-      }
+      };
     </script>
   </body>
 </html>
