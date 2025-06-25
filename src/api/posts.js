@@ -27,7 +27,7 @@ export async function getAll() {
 
 export async function createPost(data) {
   try {
-    const response = await fetch("http://127.0.0.1:5000/post/", {
+    const response = await fetch("http://127.0.0.1:5000/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +35,6 @@ export async function createPost(data) {
       credentials: "include",
       body: JSON.stringify(data),
     });
-
 
     if (response.ok) {
       return {
@@ -51,7 +50,9 @@ export async function createPost(data) {
     }
   } catch (error) {
     return {
-      error: error.message,
+      error: {
+        message: error.message,
+      },
       data: null,
     };
   }

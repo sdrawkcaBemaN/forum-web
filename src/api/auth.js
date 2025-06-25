@@ -19,7 +19,9 @@ export async function getAuthenticatedUser() {
     }
   } catch (error) {
     return {
-      error: error.message,
+      error: {
+        message: error.message,
+      },
       data: null,
     };
   }
@@ -51,7 +53,9 @@ export async function login(data) {
     }
   } catch (error) {
     return {
-      error: error.message,
+      error: {
+        message: error.message,
+      },
       data: null,
     };
   }
@@ -85,7 +89,9 @@ export async function register(data) {
     }
   } catch (error) {
     return {
-      error: error.message,
+      error: {
+        message: error.message,
+      },
       data: null,
     };
   }
@@ -112,7 +118,9 @@ export async function logout() {
     }
   } catch (error) {
     return {
-      error: error.message,
+      error: {
+        message: error.message,
+      },
       data: null,
     };
   }
@@ -146,7 +154,9 @@ export async function forgetPassword(data) {
     }
   } catch (error) {
     return {
-      error: error.message,
+      error: {
+        message: error.message,
+      },
       data: null,
     };
   }
@@ -181,7 +191,9 @@ export async function resetPassword(data) {
     }
   } catch (error) {
     return {
-      error: error.message,
+      error: {
+        message: error.message,
+      },
       data: null,
     };
   }
@@ -189,14 +201,17 @@ export async function resetPassword(data) {
 
 export async function resendVerificationLink(data) {
   try {
-    const response = await fetch("http://127.0.0.1:5000/auth/user/resent-verification-link", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      "http://127.0.0.1:5000/auth/user/resent-verification-link",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      }
+    );
 
     const result = await response.json();
 
@@ -213,9 +228,10 @@ export async function resendVerificationLink(data) {
     }
   } catch (error) {
     return {
-      error: error.message,
+      error: {
+        message: error.message,
+      },
       data: null,
     };
   }
 }
-

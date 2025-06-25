@@ -5,7 +5,6 @@
     <title>Create Post</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="../css/global.css" rel="stylesheet" />
-  
   </head>
   <body>
     <form class="container" onsubmit="handleSubmit(event)">
@@ -16,7 +15,11 @@
       </div>
       <div class="input-group">
         <label for="text">Text</label>
-        <textarea name="text" rows="5" style="resize: vertical; width: 100%;"></textarea>
+        <textarea
+          name="text"
+          rows="5"
+          style="resize: vertical; width: 100%"
+        ></textarea>
         <p class="error"></p>
       </div>
       <div class="input-group">
@@ -29,7 +32,7 @@
         <input name="tags" type="text" />
         <p class="error"></p>
       </div>
-      
+
       <button type="submit" class="btn primary">Create Post</button>
     </form>
     <script type="module">
@@ -44,13 +47,14 @@
           text: formData.get("text"),
           hyperlink: formData.get("hyperlink"),
           tags: formData.get("tags"),
-          post_id: null
+          post_id: null,
         };
 
         const { error } = await createPost(data);
 
         if (error && error.fields) {
           const errorFields = Object.entries(error.fields);
+          console.log(errorFields);
           for (let i = 0; i < errorFields.length; i++) {
             const [key, value] = errorFields[i];
 
@@ -58,11 +62,11 @@
               `.input-group input[name='${key}'] + .error`
             ).innerHTML = value;
           }
-        }else if (error && error.message) {
+        } else if (error && error.message) {
           alert(error.message);
-        } else{
+        } else {
           alert("Post created");
-          window.location.href = "../home.html";
+          // window.location.href = "../home.html";
         }
       }
 
