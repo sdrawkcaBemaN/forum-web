@@ -1,6 +1,6 @@
 export async function getAll() {
   try {
-    const response = await fetch("http://127.0.0.1:5000/post/", {
+    const response = await fetch("http://127.0.0.1:5000/post/user", {
       method: "GET",
       credentials: "include",
     });
