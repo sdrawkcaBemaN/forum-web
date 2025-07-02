@@ -28,7 +28,7 @@
     <script type="module">
       import { checkAuth } from "./src/check-auth.js";
       import { logout } from "./src/api/auth.js";
-      import { getAll as getPosts } from "./src/api/posts.js";
+      import { getAll as getPosts, removePost } from "./src/api/posts.js";
 
       const userRef = document.getElementById("user");
 
@@ -55,18 +55,42 @@
         }
         postList.innerHTML = "";
         for (const post of data) {
-          const div = document.createElement("div");
-          div.innerHTML = `
+          const postCard = document.createElement("div");
+          postCard.className = "post-card";
+          postCard.innerHTML = `
+          <div class="post-header">
             <h3>${post.title}</h3>
+            <button onclick="removePost('${post.id}')">
+              <img src="./assets/icons/delete.svg" class="icon"/>
+            </button>
+            <button onclick="editPost('${post.id}')">
+              <img src="./assets/icons/edit.svg" class="icon"/>
+            </button>
+          </div>
             <p>${post.text}</p>
             <p>${post.tags}</p>
-            <button>
-              <img src="./assets/icons/delete.svg" />
-            </button>
           `;
-          postList.appendChild(div);
+          postList.appendChild(postCard);
         }
       };
+
+      window.removePost = async function (postId){
+        const confirmed = confirm("Delete this post?");
+        if (!confirmed) return;
+        console.log(postId)
+        const { error } = await removePost(postId)
+
+        if(error){
+          alert("failed to remove post")
+        }else{
+          loadPosts()
+        }
+      }
+
+      window.editPost = function (postId) {
+        window.location.href = `./post/update-post.html?id=${postId}`;
+      };
+
 
       window.logout = async function () {
         const { error } = await logout();
