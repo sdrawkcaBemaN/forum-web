@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="./css/global.css" rel="stylesheet" />
-    <title>User Web | Forum</title>
+    <link href="../css/global.css" rel="stylesheet" />
+    <title>User Posts | Forum</title>
   </head>
   <body>
     <header>
@@ -13,8 +13,7 @@
 
         <div class="btn group">
           <button class="btn primary" onclick="logout()">Logout</button>
-          <button class="btn outline" onclick="createPost()">Post</button>
-          <button class="btn primary" onclick="viewOwn()">My Posts</button>
+          <button class="btn outline" onclick="returnHome()">Home</button>
         </div>
       </div>
     </header>
@@ -27,9 +26,9 @@
       <div id="post-list"></div>
     </main>
     <script type="module">
-      import { checkAuth } from "./src/check-auth.js";
-      import { logout } from "./src/api/auth.js";
-      import { getAll as getPosts, removePost, getUser } from "./src/api/posts.js";
+      import { checkAuth } from "../src/check-auth.js";
+      import { logout } from "../src/api/auth.js";
+      import {  getMyPosts, removePost, getUser } from "../src/api/posts.js";
 
       const userRef = document.getElementById("user");
 
@@ -46,7 +45,7 @@
       };
 
       window.loadPosts = async function () {
-        const { error, data } = await getPosts();
+        const { error, data } = await getMyPosts();
         const postList = document.getElementById("post-list");
         //**************************************************************
 
@@ -69,16 +68,16 @@
             <h3>${post.title}</h3>
             <div>
             <button onclick="removePost('${post.id}')">
-              <img src="./assets/icons/delete.svg" class="icon"/>
+              <img src="../assets/icons/delete.svg" class="icon"/>
             </button>
             <button onclick="editPost('${post.id}')">
-              <img src="./assets/icons/edit.svg" class="icon"/>
+              <img src="../assets/icons/edit.svg" class="icon"/>
             </button>
             </div>
           </div>
             <p>${post.text}</p>
             <p>${post.tags}</p>
-            <small>Created By: ${userPosted}<small>
+            <small>Created By: You<small>
           `;
           postList.appendChild(postCard);
         }
@@ -87,7 +86,6 @@
       window.removePost = async function (postId){
         const confirmed = confirm("Delete this post?");
         if (!confirmed) return;
-        console.log(postId)
         const { error } = await removePost(postId)
 
         if(error){
@@ -101,8 +99,8 @@
         window.location.href = `./post/update-post.html?id=${postId}`;
       };
 
-      window.viewOwn = function(){
-        window.location.href = `./post/view-own.html`;
+      window.returnHome = function(){
+        window.location.href = `../home.html`;
       }
 
       window.logout = async function () {
