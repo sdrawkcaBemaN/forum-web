@@ -29,7 +29,11 @@
     <script type="module">
       import { checkAuth } from "./src/check-auth.js";
       import { logout } from "./src/api/auth.js";
-      import { getAll as getPosts, removePost, getUser } from "./src/api/posts.js";
+      import {
+        getAll as getPosts,
+        removePost,
+        getUser,
+      } from "./src/api/posts.js";
 
       const userRef = document.getElementById("user");
 
@@ -56,14 +60,9 @@
         }
         postList.innerHTML = "";
         for (const post of data) {
+          console.log(post);
           const postCard = document.createElement("div");
           postCard.className = "post-card";
-          let userPosted = ""
-          const { error: userError, data: user } = await getUser(post.user_id)
-          if(!userError){
-            userPosted = user.username
-          }
-          console.log(userPosted)
           postCard.innerHTML = `
           <div class="post-header">
             <h3>${post.title}</h3>
@@ -78,32 +77,32 @@
           </div>
             <p>${post.text}</p>
             <p>${post.tags}</p>
-            <small>Created By: ${userPosted}<small>
+            <small>Created By: ${post.user.name}<small>
           `;
           postList.appendChild(postCard);
         }
       };
 
-      window.removePost = async function (postId){
+      window.removePost = async function (postId) {
         const confirmed = confirm("Delete this post?");
         if (!confirmed) return;
-        console.log(postId)
-        const { error } = await removePost(postId)
+        console.log(postId);
+        const { error } = await removePost(postId);
 
-        if(error){
-          alert("failed to remove post")
-        }else{
-          loadPosts()
+        if (error) {
+          alert("failed to remove post");
+        } else {
+          loadPosts();
         }
-      }
+      };
 
       window.editPost = function (postId) {
         window.location.href = `./post/update-post.html?id=${postId}`;
       };
 
-      window.viewOwn = function(){
+      window.viewOwn = function () {
         window.location.href = `./post/view-own.html`;
-      }
+      };
 
       window.logout = async function () {
         const { error } = await logout();
