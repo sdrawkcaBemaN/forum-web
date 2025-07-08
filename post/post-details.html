@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../css/global.css" rel="stylesheet" />
+    <title>Post Details</title>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Penjamin Niganyahu</h1>
+        <div class="btn group">
+          <button type="button" style="margin-top: 10px"  onclick="window.location.href = '../home.html'" class="btn outline">Home</button>
+        </div>
+      </div>
+    </header>
+    <main class="container">
+        
+    <div class="container" id="post-details">
+      <h2>Post Details</h2>
+      <hr />
+    </div>
+
+    <h3>Replies</h3>
+    <br>
+    <div id="replies-list"></div>
+    
+    </main>
+
+    <script type="module">
+      import { checkAuth } from "../src/check-auth.js";
+      import {
+        getReplies,
+        removePost,
+        getPost,
+      } from "../src/api/posts.js";
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get("id");
+
+      const replies = document.getElementById("replies-list")
+
+      let user = null
+      
+      window.onload = async function () {
+        user = await checkAuth(["verified"]);
+
+        if (!user) {
+          window.location.href = "./auth/login.html";
+        } 
+
+        await loadPost();
+        await loadReplies(id)
+      };
+
+      window.loadPost = async function () {
+        const { error, data } = await getPost(id);
+        const postDetails = document.getElementById("post-details");
+        //**************************************************************
+
+        if (error || !data) {
+          postDetails.innerHTML = "<p>Failed to load post.</p>";
+          return;
+        }
+        postDetails.innerHTML = "";
+        const post = data
+          console.log(post);
+          const isUser = post.user.id === user.id
+          const postCard = document.createElement("div");
+          postCard.className = "post-card";
+          postCard.innerHTML = `
+          <div class="post-header">
+            <h3>${post.title}</h3>
+            <div>
+              ${isUser ? `
+            <button onclick="removePost('${post.id}')">
+              <img src="../assets/icons/delete.svg" class="icon"/>
+            </button>
+            <button onclick="editPost('${post.id}')">
+              <img src="../assets/icons/edit.svg" class="icon"/>
+            </button>` : ''}
+            <button onclick="replyPost('${post.id}')">
+              <class="icon"/>
+              Reply Post</button>
+            </div>
+          </div>
+            <p>${post.text}</p>
+            <p>${post.tags}</p>
+            <small>Created By: ${post.user.name}<small>
+              
+          `;
+          postDetails.appendChild(postCard);
+        }
+
+        
+      window.loadReplies = async function (postId){
+        const { error, data } = await getReplies(postId)
+
+        if(error || !data){
+            replies.innerHTML = "<p>Failed to load replies.</p>";
+            return
+        }else{
+            if(data.length === 0){
+                replies.innerHTML = "<p>No replies.</p>";
+            }else{
+                for(const reply of data){
+                    const card = document.createElement("div");
+                    card.className = "post-card";
+                    card.onclick = () => {
+                        window.location.href = `./post-details.html?id=${reply.id}`;
+                    };
+                    card.innerHTML = `
+                        <h4>${reply.title}</h4>
+                        <p>${reply.text}</p>
+                        <p><strong>Tags:</strong> ${reply.tags}</p>
+                        <small>By: ${reply.user.name}</small>
+                        `;
+                        replies.appendChild(card);
+                }
+            }
+        }
+      }
+
+      window.removePost = async function (postId) {
+        const confirmed = confirm("Delete this post?");
+        if (!confirmed) return;
+        console.log(postId);
+        const { error } = await removePost(postId);
+
+        if (error) {
+          alert("failed to remove post");
+        } else {
+          loadPosts();
+        }
+      };
+
+
+      window.editPost = function (postId) {
+        window.location.href = `/post/update-post.html?id=${postId}`;
+      };
+
+      window.replyPost = function (postId) {
+        window.location.href = `/post/reply-post.html?id=${postId}`;
+      };
+
+    
+    </script>
+  </body>
+</html>

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Update Post</title>
+    <title>Reply Post</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="../css/global.css" rel="stylesheet" />
   </head>
@@ -10,7 +10,7 @@
     <form class="container" onsubmit="handleSubmit(event)">
       <div class="input-group">
         <label for="title">Title</label>
-        <input name="title" id="title"type="text" />
+        <input name="title" type="text" />
         <p class="error"></p>
       </div>
       <div class="input-group">
@@ -19,56 +19,28 @@
           name="text"
           rows="5"
           style="resize: vertical; width: 100%"
-          id="text"
         ></textarea>
         <p class="error"></p>
       </div>
       <div class="input-group">
         <label for="hyperlink">Hyperlink</label>
-        <input name="hyperlink" id="hyperlink" type="text" />
+        <input name="hyperlink" type="text" />
         <p class="error"></p>
       </div>
       <div class="input-group">
         <label for="tags">Tags</label>
-        <input name="tags" id="tags" type="text" />
+        <input name="tags" type="text" />
         <p class="error"></p>
       </div>
 
-      <button type="submit" class="btn primary">Update Post</button>
-      <button type="button" style="margin-top: 10px"  onclick="window.location.href = '../home.html'" class="btn outline">Cancel</button>
+      <button type="submit" class="btn primary">Reply Post</button>
     </form>
     <script type="module">
-      import { updatePost, getPost } from "../src/api/posts.js";
+      import { createPost } from "../src/api/posts.js";
 
-        const title = document.getElementById("title")
-        const text = document.getElementById("text")
-        const hyperlink = document.getElementById("hyperlink")
-        const tags = document.getElementById("tags")
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get("id");
-        console.log(id)
-      
-      
-      window.onload = async function(){
-        
-        const { data: post, error } = await getPost(id)
-        console.log(post)
-
-        if (error || !post) {
-          //window.location.href = '../home.html';
-        }
-
-        title.value = post.title
-        text.value = post.text
-        hyperlink.value = post.hyperlink
-        tags.value = post.tags
-
-        console.log(title)
-        console.log(text)
-        console.log(hyperlink)
-        console.log(tags)
-      }
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get("id");
+      console.log(id)
 
       async function handleSubmit(event) {
         event.preventDefault();
@@ -79,10 +51,10 @@
           text: formData.get("text"),
           hyperlink: formData.get("hyperlink"),
           tags: formData.get("tags"),
-          post_id: null,
+          post_id: id,
         };
 
-        const { error } = await updatePost(id, data);
+        const { error } = await createPost(data);
 
         if (error && error.fields) {
           const errorFields = Object.entries(error.fields);
@@ -105,8 +77,8 @@
         } else if (error && error.message) {
           alert(error.message);
         } else {
-          alert("Post updated");
-           window.location.href = "../home.html";
+          alert("Post created");
+          window.location.href = "../home.html";
         }
       }
 

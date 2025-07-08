@@ -25,6 +25,7 @@
     </div>
     <main class="container">
       <div id="post-list"></div>
+      <button id="load-more" class="btn outline">Load More</button>
     </main>
     <script type="module">
       import { checkAuth } from "./src/check-auth.js";
@@ -36,9 +37,15 @@
       } from "./src/api/posts.js";
 
       const userRef = document.getElementById("user");
+      const loadMore = document.getElementById("load-more")
+      let user = null
+      let page = 1
+      let size = 3
+      let total;
+      let loaded = size
 
       window.onload = async function () {
-        const user = await checkAuth(["verified"]);
+        user = await checkAuth(["verified"]);
 
         if (user) {
           userRef.innerHTML = user.name;
@@ -50,9 +57,11 @@
       };
 
       window.loadPosts = async function () {
-        const { error, data } = await getPosts();
+        const { error, data, total: postCount } = await getPosts( page, size );
         const postList = document.getElementById("post-list");
         //**************************************************************
+
+        total = postCount
 
         if (error || !data) {
           postList.innerHTML = "<p>Failed to load posts.</p>";
@@ -61,25 +70,45 @@
         postList.innerHTML = "";
         for (const post of data) {
           console.log(post);
+          const isUser = post.user.id === user.id
           const postCard = document.createElement("div");
           postCard.className = "post-card";
           postCard.innerHTML = `
           <div class="post-header">
             <h3>${post.title}</h3>
             <div>
-            <button onclick="removePost('${post.id}')">
+              ${isUser ? `
+            <button onclick="event.stopPropagation(); removePost('${post.id}')">
               <img src="./assets/icons/delete.svg" class="icon"/>
             </button>
-            <button onclick="editPost('${post.id}')">
+            <button onclick="event.stopPropagation(); editPost('${post.id}')">
               <img src="./assets/icons/edit.svg" class="icon"/>
-            </button>
+            </button>` : ''}
+            <button onclick="event.stopPropagation(); replyPost('${post.id}')">
+              <class="icon"/>
+              Reply Post</button>
             </div>
           </div>
             <p>${post.text}</p>
             <p>${post.tags}</p>
             <small>Created By: ${post.user.name}<small>
+              
           `;
           postList.appendChild(postCard);
+          postCard.onclick = () => {
+          window.location.href = `./post/post-details.html?id=${post.id}`;
+        };
+          if(loaded > total){
+            loaded = total
+          }
+
+          if (loaded >= total) {
+            loadMore.style.display = "none"; 
+          } else {
+            loadMore.style.display = "block"; 
+          }  
+          console.log(loaded)
+          console.log(total)
         }
       };
 
@@ -96,8 +125,20 @@
         }
       };
 
+      //doom scroll approach using size || book thing use page
+      loadMore.addEventListener("click", () => {
+        size += 3;  //page += 1;
+        loaded += 3  //loaded +=size
+        loadPosts();
+      });
+
+
       window.editPost = function (postId) {
         window.location.href = `./post/update-post.html?id=${postId}`;
+      };
+
+      window.replyPost = function (postId) {
+        window.location.href = `./post/reply-post.html?id=${postId}`;
       };
 
       window.viewOwn = function () {

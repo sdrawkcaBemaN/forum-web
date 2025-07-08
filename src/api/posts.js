@@ -1,6 +1,6 @@
-export async function getAll() {
+export async function getAll(page = 1, size = 10) {
   try {
-    const response = await fetch("http://127.0.0.1:5000/post", {
+    const response = await fetch(`http://127.0.0.1:5000/post?page=${page}&size=${size}`, {
       method: "GET",
       credentials: "include",
     });
@@ -9,11 +9,13 @@ export async function getAll() {
     if (response.ok) {
       return {
         error: null,
+        total: result.total,
         data: result.data,
       };
     } else {
       return {
         error: result.error,
+        total: 0,
         data: null,
       };
     }
@@ -25,9 +27,9 @@ export async function getAll() {
   }
 }
 
-export async function getMyPosts() {
+export async function getMyPosts(page = 1, size = 10) {
   try {
-    const response = await fetch("http://127.0.0.1:5000/post/user", {
+    const response = await fetch(`http://127.0.0.1:5000/post/user?page=${page}&size=${size}`, {
       method: "GET",
       credentials: "include",
     });
@@ -36,11 +38,13 @@ export async function getMyPosts() {
     if (response.ok) {
       return {
         error: null,
+        total: result.total,
         data: result.data,
       };
     } else {
       return {
         error: result.error,
+        total: 0,
         data: null,
       };
     }
@@ -204,4 +208,34 @@ export async function getUser(id) {
     };
   }
 }
+
+export async function getReplies(id) {
+  try {
+    const response = await fetch(`http://127.0.0.1:5000/post/${id}/replies`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      return {
+        error: null,
+        data: result.data,
+      };
+    } else {
+      return {
+        error: result.error,
+        data: null,
+      };
+    }
+  } catch (error) {
+    return {
+      error: {
+        message: error.message,
+      },
+      data: null,
+    };
+  }
+}
+
 
