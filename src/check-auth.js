@@ -4,7 +4,7 @@ export async function checkAuth(status = ["verified"]) {
   const { data: user } = await getAuthenticatedUser();
 
   if (!user || !status.includes(user.status)) {
-    window.location.href = "/login.html";
+    window.location.href = "../auth/login.html";
     return null;
   }
 

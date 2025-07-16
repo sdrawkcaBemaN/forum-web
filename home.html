@@ -9,23 +9,24 @@
   <body>
     <header>
       <div class="container">
-        <h1>Hello <span id="user"></span></h1>
+        <div style="display: flex; justify-content: space-between;">
+        <h1>Forum</h1>
+        <h1 class="avatar" id="user"></h1>
+        </div>
+        
 
         <div class="btn group">
           <button class="btn primary" onclick="logout()">Logout</button>
-          <button class="btn outline" onclick="createPost()">Post</button>
           <button class="btn primary" onclick="viewOwn()">My Posts</button>
         </div>
       </div>
     </header>
 
     <div class="post-box">
-      <h2>Posts</h2>
-      <hr />
     </div>
     <main class="container">
       <div id="post-list"></div>
-      <button id="load-more" class="btn outline">Load More</button>
+      <button id="load-more" class="btn load-more-btn"><img src="./assets/icons/downarrow.svg" class="icon"/></button>
     </main>
     <script type="module">
       import { checkAuth } from "./src/check-auth.js";
@@ -49,9 +50,14 @@
 
       window.onload = async function () {
         user = await checkAuth(["verified"]);
+        const initials = user.name //get first letters
+          .split(" ")
+          .map(n => n[0])
+          .join("")
+          .toUpperCase();
 
         if (user) {
-          userRef.innerHTML = user.name;
+          userRef.innerHTML = initials;
         } else {
           window.location.href = "./auth/login.html";
         }
@@ -93,9 +99,54 @@
 
           const postCard = document.createElement("div");
           postCard.className = "post-card";
+
+          const initials = post.user.name //get first letters
+          .split(" ")
+          .map(n => n[0])
+          .join("")
+          .toUpperCase();
+
           postCard.innerHTML = `
           <div class="post-header">
-            <h3>${post.title}</h3>
+          <div class="avatar">${initials}</div>
+          <strong>${post.user.name}</strong>
+
+          </div>
+
+          
+
+          <div class="post-content">
+              <br>
+            <strong>${post.title}</strong>
+            <p>${post.text}</p>
+
+
+            <div class="post-meta">
+            <p>${post.tags}</p>
+
+              
+            <div class="action">
+              <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
+              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
+                fill="${liked ? '#0ea5e9' : '#666666'}">
+                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
+                63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
+                157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
+              </svg>
+            </button>
+              
+             <span> ${post.like_count} likes</span>
+            </div>
+
+          
+            <div class="action">
+              <button onclick="event.stopPropagation(); replyPost('${post.id}')">
+              <img src="./assets/icons/reply.svg" class="icon"/>
+              </button>
+              
+            <span> ${replyCount} replies</span>
+            </div>
+
             <div>
               ${isUser ? `
             <button onclick="event.stopPropagation(); removePost('${post.id}')">
@@ -106,27 +157,11 @@
               <img src="./assets/icons/edit.svg" class="icon"/>
             </button>` : ''}
 
-            <button onclick="event.stopPropagation(); replyPost('${post.id}')">
-              <class="icon"/>
-              Reply</button>
-
-            <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                fill="${liked ? '#0ea5e9' : '#666666'}">
-                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
-                63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
-                157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
-              </svg>
-            </button>
+            </div>
 
             </div>
-          </div>
-            <p>${post.text}</p>
-            <p>${post.tags}</p>
-            <small>Created By: ${post.user.name}<small>
-              <br>
-            <small>${post.like_count} likes</small>
-            <small>${replyCount} replies</small>
+            
+            </div>
               
           `;
           postList.appendChild(postCard);
@@ -212,5 +247,6 @@
         window.location.href = "./post/create-post.html";
       };
     </script>
+    <button class="btn-outline-circle" onclick="createPost()">+</button>
   </body>
 </html>
