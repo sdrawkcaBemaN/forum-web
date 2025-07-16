@@ -114,6 +114,9 @@ h1 {
   border: 1px solid transparent;
   border-radius: 4px;
   font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  text-align: center;
 }
 
 .btn.group {
@@ -166,6 +169,9 @@ button:focus {
   bottom: 1rem;
   right: 1rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .load-more-btn {
