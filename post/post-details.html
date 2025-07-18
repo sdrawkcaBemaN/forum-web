@@ -8,88 +8,101 @@
   </head>
   <body>
     <div class="container">
-    <div class="header-border">
-    <header>
-      
-        <div style="display: flex; align-items: center; justify-content: center; justify-content: center; font-size: 10px;">
-          <div style="flex: 1; display: flex; justify-content: flex-start;">
-            <button onclick="returnHome()" style="border: none; background: none;">
-              <svg width="24" height="24" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#0ea5e9" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"/>
-                <path fill="#0ea5e9" d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"/>
-              </svg>
-            </button>
-          </div>
-          <div style="flex: 1; display: flex; justify-content: center;">
-            <h1 style="margin: 0; font-size: 16px; color: #0ea5e9;">Post</h1>
-          </div>
+      <div class="header-border">
+        <header>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              justify-content: center;
+              font-size: 10px;
+            "
+          >
+            <div style="flex: 1; display: flex; justify-content: flex-start">
+              <button
+                onclick="returnHome()"
+                style="border: none; background: none"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 1024 1024"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill="#0ea5e9"
+                    d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"
+                  />
+                  <path
+                    fill="#0ea5e9"
+                    d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div style="flex: 1; display: flex; justify-content: center">
+              <h1 style="margin: 0; font-size: 16px; color: #0ea5e9">Post</h1>
+            </div>
 
-          <div style="flex: 1;"></div>
+            <div style="flex: 1"></div>
+          </div>
+        </header>
+      </div>
+
+      <main class="container">
+        <div id="post-details">
+          <h2>Post Details</h2>
+          <hr />
         </div>
 
-    </header>
-    </div>
+        <h3 style="font-size: 15px; padding: 10px 14px">Replies</h3>
+        <br />
+        <div id="replies-list"></div>
+      </main>
 
+      <script type="module">
+        import { checkAuth } from "../src/check-auth.js";
+        import {
+          getReplies,
+          removePost,
+          getPost,
+          likePost,
+          unlikePost,
+        } from "../src/api/posts.js";
+        import { followUser, unfollowUser } from "../src/api/user.js";
 
-        
-    <main class="container">
-        
-    <div id="post-details">
-      <h2>Post Details</h2>
-      <hr />
-    </div>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get("id");
 
-    <h3 style="font-size: 15px; padding-top: 10px; padding-left: 5px;">Replies</h3>
-    <br>
-    <div id="replies-list"></div>
-    
-    </main>
+        const replies = document.getElementById("replies-list");
 
-    <script type="module">
-      import { checkAuth } from "../src/check-auth.js";
-      import {
-        getReplies,
-        removePost,
-        getPost,
-        likePost,
-        unlikePost
-      } from "../src/api/posts.js";
-      import { followUser, unfollowUser } from "../src/api/user.js"
+        let user = null;
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const id = urlParams.get("id");
-   
+        window.onload = async function () {
+          user = await checkAuth(["verified"]);
 
-      const replies = document.getElementById("replies-list")
+          if (!user) {
+            window.location.href = "../auth/login.html";
+          }
 
-      let user = null
-      
-      window.onload = async function () {
-        user = await checkAuth(["verified"]);
+          await loadPost();
+          await loadReplies(id);
+        };
 
-        
+        window.loadPost = async function () {
+          const { error, data } = await getPost(id);
+          const postDetails = document.getElementById("post-details");
+          //**************************************************************
 
-        if (!user) {
-          window.location.href = "../auth/login.html";
-        }
-
-        await loadPost();
-        await loadReplies(id)
-      };
-
-      window.loadPost = async function () {
-        const { error, data } = await getPost(id);
-        const postDetails = document.getElementById("post-details");
-        //**************************************************************
-
-        if (error || !data) {
-          postDetails.innerHTML = "<p>Failed to load post.</p>";
-          return;
-        }
-        postDetails.innerHTML = "";
-        const post = data
+          if (error || !data) {
+            postDetails.innerHTML = "<p>Failed to load post.</p>";
+            return;
+          }
+          postDetails.innerHTML = "";
+          const post = data;
           console.log(post);
-          const isUser = post.user.id === user.id
+          const isUser = post.user.id === user.id;
           let liked = false;
           let following = false;
           let replyCount = 0;
@@ -101,22 +114,26 @@
             }
           }
 
-          
-
-          const {error: repliesError, data: repliesData} = await getReplies(id);
-          replyCount = repliesData.length
+          const { error: repliesError, data: repliesData } = await getReplies(
+            id
+          );
+          replyCount = repliesData.length;
 
           const postCard = document.createElement("div");
           postCard.className = "post-card";
 
           const initials = post.user.name //get first letters
-          .split(" ")
-          .map(n => n[0])
-          .join("")
-          .toUpperCase();
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase();
 
           const date = new Date(post.created_at);
-          const formattedDate = `${date.getHours()}.${String(date.getMinutes()).padStart(2, '0')} - ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+          const formattedDate = `${date.getHours()}.${String(
+            date.getMinutes()
+          ).padStart(2, "0")} - ${date.getDate()}/${
+            date.getMonth() + 1
+          }/${date.getFullYear()}`;
 
           postCard.innerHTML = `
           <div class="post-header">
@@ -125,231 +142,240 @@
           <button onclick="event.stopPropagation();"> follow</button>
           </div>
 
-          
+
 
           <div class="post-content">
-              
+
             <p>${post.text}</p>
             <p style="font-size: 12px; margin-top: 12px;">${formattedDate}</p>
 
             <div class="post-meta">
 
-              
+
             <div class="action">
-              <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
+              <button onclick="event.stopPropagation(); ${
+                liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`
+              }">
               <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
-                fill="${liked ? '#0ea5e9' : '#666666'}">
-                <path 
+                fill="${liked ? "#0ea5e9" : "#666666"}">
+                <path
                   d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
                   63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
                   157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"
-                  fill="${liked ? '#0ea5e9' : 'white'}"
-                  stroke="${liked ? 'none' : '#666666'}"
+                  fill="${liked ? "#0ea5e9" : "white"}"
+                  stroke="${liked ? "none" : "#666666"}"
                   stroke-width="40"
                 />
               </svg>
             </button>
-              
+
              <span> ${post.like_count} likes</span>
             </div>
 
-          
+
             <div class="action">
-              <button onclick="event.stopPropagation(); replyPost('${post.id}')">
+              <button onclick="event.stopPropagation(); replyPost('${
+                post.id
+              }')">
               <img src="../assets/icons/reply.svg" class="icon""/>
               </button>
-              
-            <span> ${replyCount} ${replyCount === 1 ? "reply" : "replies"}</span>
+
+            <span> ${replyCount} ${
+            replyCount === 1 ? "reply" : "replies"
+          }</span>
             </div>
 
 
             </div>
-            
+
             </div>
-              
+
           `;
           postDetails.appendChild(postCard);
-        }
+        };
 
-        
-      window.loadReplies = async function (postId){
-        const { error, data } = await getReplies(postId)
+        window.loadReplies = async function (postId) {
+          const { error, data } = await getReplies(postId);
 
-        if(error || !data){
+          if (error || !data) {
             replies.innerHTML = "<p>Failed to load replies.</p>";
-            return
-        }else{
-            if(data.length === 0){
-                replies.innerHTML = "<p>No replies.</p>";
-            }else{
-                replies.innerHTML = "";
-                for(const reply of data){
-                    const isUser = reply.user.id === user.id
-                    let liked = false;
-                    let replyCount = 0;
-                    for (const like of reply.likes) {
-                      if (like.user_id === user.id) {
-                        liked = true;
-                        break;
-                      }
-                    }
-                    const {error: repliesError, data: repliesData} = await getReplies(reply.id);
-                    replyCount = repliesData.length
+            return;
+          } else {
+            if (data.length === 0) {
+              replies.innerHTML = `<p style="padding: 0 14px">No replies.</p>`;
+            } else {
+              replies.innerHTML = "";
+              for (const reply of data) {
+                const isUser = reply.user.id === user.id;
+                let liked = false;
+                let replyCount = 0;
+                for (const like of reply.likes) {
+                  if (like.user_id === user.id) {
+                    liked = true;
+                    break;
+                  }
+                }
+                const { error: repliesError, data: repliesData } =
+                  await getReplies(reply.id);
+                replyCount = repliesData.length;
 
-                    const card = document.createElement("div");
-                    card.className = "post-card";
-                    card.onclick = () => {
-                        window.location.href = `./post-details.html?id=${reply.id}`;
-                    };
-                    const initials = reply.user.name //get first letters
-                    .split(" ")
-                    .map(n => n[0])
-                    .join("")
-                    .toUpperCase();
-                    card.innerHTML = `
+                const card = document.createElement("div");
+                card.className = "post-card";
+                card.onclick = () => {
+                  window.location.href = `./post-details.html?id=${reply.id}`;
+                };
+                const initials = reply.user.name //get first letters
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase();
+                card.innerHTML = `
                     <div class="post-header">
                     <div class="avatar">${initials}</div>
                     <p>${reply.user.name}</p>
                     <button onclick="event.stopPropagation();"> follow</button>
                     </div>
 
-                    
+
 
                     <div class="post-content">
-                        
+
                       <p>${reply.text}</p>
 
 
                       <div class="post-meta">
 
-                        
+
                       <div class="action">
-                        <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${reply.id}')` : `likePost('${reply.id}')`}">
+                        <button onclick="event.stopPropagation(); ${
+                          liked
+                            ? `unlikePost('${reply.id}')`
+                            : `likePost('${reply.id}')`
+                        }">
                         <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
-                          fill="${liked ? '#0ea5e9' : '#666666'}">
-                          <path 
+                          fill="${liked ? "#0ea5e9" : "#666666"}">
+                          <path
                             d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
                             63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
                             157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"
-                            fill="${liked ? '#0ea5e9' : 'white'}"
-                            stroke="${liked ? 'none' : '#666666'}"
+                            fill="${liked ? "#0ea5e9" : "white"}"
+                            stroke="${liked ? "none" : "#666666"}"
                             stroke-width="40"
                           />
                         </svg>
                       </button>
-                        
+
                       <span> ${reply.like_count} likes</span>
                       </div>
 
-                    
+
                       <div class="action">
-                        <button onclick="event.stopPropagation(); replyPost('${reply.id}')">
+                        <button onclick="event.stopPropagation(); replyPost('${
+                          reply.id
+                        }')">
                         <img src="../assets/icons/reply.svg" class="icon""/>
                         </button>
-                        
-                      <span> ${replyCount} ${replyCount === 1 ? "reply" : "replies"}</span>
+
+                      <span> ${replyCount} ${
+                  replyCount === 1 ? "reply" : "replies"
+                }</span>
                       </div>
 
 
                       </div>
-                      
+
                       </div>
                         `;
-                        replies.appendChild(card);
-                }
+                replies.appendChild(card);
+              }
             }
-        }
-      }
+          }
+        };
 
-      window.likePost = async function (postId) {
-        const { error } = await likePost(postId);
-        if (error) {
-          alert("Failed to like post.");
-          return;
-        }
-        await loadPost();
-      };
+        window.likePost = async function (postId) {
+          const { error } = await likePost(postId);
+          if (error) {
+            alert("Failed to like post.");
+            return;
+          }
+          await loadPost();
+        };
 
-      window.unlikePost = async function (postId) {
-        const { error } = await unlikePost(postId);
-        if (error) {
-          alert("Failed to unlike post.");
-          return;
-        }
-        await loadPost();
-      };
+        window.unlikePost = async function (postId) {
+          const { error } = await unlikePost(postId);
+          if (error) {
+            alert("Failed to unlike post.");
+            return;
+          }
+          await loadPost();
+        };
 
-      window.followUser = async function (id) {
-        const { error } = await followUser(id);
-        if (error) {
-          alert("Failed to follow user.");
-          return;
-        }
-        await loadPost();
-      };
+        window.followUser = async function (id) {
+          const { error } = await followUser(id);
+          if (error) {
+            alert("Failed to follow user.");
+            return;
+          }
+          await loadPost();
+        };
 
-      window.unfollowUser = async function (id) {
-        const { error } = await unfollowUser(id);
-        if (error) {
-          alert("Failed to unfollow user.");
-          return;
-        }
-        await loadPost();
-      };
-      
+        window.unfollowUser = async function (id) {
+          const { error } = await unfollowUser(id);
+          if (error) {
+            alert("Failed to unfollow user.");
+            return;
+          }
+          await loadPost();
+        };
 
+        window.likeReply = async function (postId) {
+          const { error } = await likePost(postId);
+          if (error) {
+            alert("Failed to like post.");
+            return;
+          }
+          await loadReplies(id);
+        };
 
-      window.likeReply = async function (postId) {
-        const { error } = await likePost(postId);
-        if (error) {
-          alert("Failed to like post.");
-          return;
-        }
-        await loadReplies(id);
-      };
+        window.unlikeReply = async function (postId) {
+          const { error } = await unlikePost(postId);
+          if (error) {
+            alert("Failed to unlike post.");
+            return;
+          }
+          await loadReplies(id);
+        };
 
-      window.unlikeReply = async function (postId) {
-        const { error } = await unlikePost(postId);
-        if (error) {
-          alert("Failed to unlike post.");
-          return;
-        }
-        await loadReplies(id);
-      };
+        window.removePost = async function (postId) {
+          const confirmed = confirm("Delete this post?");
+          if (!confirmed) return;
+          console.log(postId);
+          const { error } = await removePost(postId);
 
-      window.removePost = async function (postId) {
-        const confirmed = confirm("Delete this post?");
-        if (!confirmed) return;
-        console.log(postId);
-        const { error } = await removePost(postId);
+          if (error) {
+            alert("failed to remove post");
+          } else {
+            loadPosts();
+          }
+        };
 
-        if (error) {
-          alert("failed to remove post");
-        } else {
-          loadPosts();
-        }
-      };
+        window.editPost = function (postId) {
+          window.location.href = `/post/update-post.html?id=${postId}`;
+        };
 
+        window.replyPost = function (postId) {
+          window.location.href = `/post/reply-post.html?id=${postId}`;
+        };
 
-      window.editPost = function (postId) {
-        window.location.href = `/post/update-post.html?id=${postId}`;
-      };
+        window.returnHome = function () {
+          window.location.href = `../home.html`;
+        };
 
-      window.replyPost = function (postId) {
-        window.location.href = `/post/reply-post.html?id=${postId}`;
-      };
-
-      window.returnHome = function(){
-        window.location.href = `../home.html`;
-      }
-
-      window.createPost = function () {
-        window.location.href = "/post/create-post.html";
-      };
-     
-    
-    </script>
-    <button class="btn-outline-circle" onclick="createPost()">+</button> 
+        window.createPost = function () {
+          window.location.href = "/post/create-post.html";
+        };
+      </script>
+      <button class="btn-outline-circle" onclick="createPost()">+</button>
     </div>
   </body>
 </html>
