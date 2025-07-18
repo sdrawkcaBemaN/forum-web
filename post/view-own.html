@@ -7,20 +7,42 @@
     <title>User Posts | Forum</title>
   </head>
   <body>
+    <div class="container">
+    <div class="header-border">
     <header>
-      <div class="container">
-        <h1>Hello <span id="user"></span></h1>
+      
+        <div style="display: flex; align-items: center; justify-content: center; justify-content: center; font-size: 10px;">
+          <div style="flex: 1; display: flex; justify-content: flex-start;">
+            <button onclick="returnHome()" style="border: none; background: none;">
+              <svg width="24" height="24" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#0ea5e9" d="M224 480h640a32 32 0 1 1 0 64H224a32 32 0 0 1 0-64z"/>
+                <path fill="#0ea5e9" d="m237.248 512 265.408 265.344a32 32 0 0 1-45.312 45.312l-288-288a32 32 0 0 1 0-45.312l288-288a32 32 0 1 1 45.312 45.312L237.248 512z"/>
+              </svg>
+            </button>
+          </div>
+          <div style="flex: 1; display: flex; justify-content: center;">
+            <h1 style="margin: 0; font-size: 16px; color: #0ea5e9;">Post</h1>
+          </div>
 
-        <div class="btn group">
-          <button class="btn primary" onclick="logout()">Logout</button>
-          <button class="btn outline" onclick="returnHome()">Home</button>
+          <div style="flex: 1;"></div>
         </div>
-      </div>
+
     </header>
+    </div>
+
+    <div class="header-border">
+    <div style="display: flex; justify-content: space-between; padding: 10px;">
+        <button class="avatar" id="user" onclick="viewOwn()" style="width: 100px; height: 100px; font-size: 20px; font-size: 24px;"></button>
+        </div>
+
+        <div style="padding-bottom: 10px;">
+        <small id="name"></small>
+        <h6 id="username"></h6>
+        </div>
+    </div>
 
     <div class="post-box">
-      <h2>Posts</h2>
-      <hr />
+      <h2 style="font-size: 15px; display: flex;">Posts</h2>
     </div>
     <main class="container">
       <div id="post-list"></div>
@@ -31,13 +53,23 @@
       import {  getMyPosts, removePost, getUser, getReplies, likePost, unlikePost } from "../src/api/posts.js";
 
       const userRef = document.getElementById("user");
+      const userNameRef = document.getElementById("name");
+      const userUserName = document.getElementById("username");
       let user = null
 
       window.onload = async function () {
         user = await checkAuth(["verified"]);
 
+        const initials = user.name //get first letters
+          .split(" ")
+          .map(n => n[0])
+          .join("")
+          .toUpperCase();
+
         if (user) {
-          userRef.innerHTML = user.name;
+          userRef.innerHTML = initials;
+          userNameRef.innerHTML = user.name
+          userUserName.innerHTML = `@${user.username}`
         } else {
           window.location.href = "./auth/login.html";
         }
@@ -77,38 +109,77 @@
             userPosted = creator.username
           }
           console.log(userPosted)
+
+          const initials = post.user.name //get first letters
+          .split(" ")
+          .map(n => n[0])
+          .join("")
+          .toUpperCase();
+
           postCard.innerHTML = `
           <div class="post-header">
-            <h3>${post.title}</h3>
-            <div>
-
-            <button onclick="removePost('${post.id}')">
-              <img src="../assets/icons/delete.svg" class="icon"/>
-            </button>
-
-            <button onclick="editPost('${post.id}')">
-              <img src="../assets/icons/edit.svg" class="icon"/>
-            </button>
-
-            <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
-                fill="${liked ? '#0ea5e9' : '#666666'}">
-                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
-                63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
-                157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
-              </svg>
-            </button>
-
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="avatar">${initials}</div>
+              <p>${post.user.name}</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button onclick="event.stopPropagation(); removePost('${post.id}')">
+                <img src="../assets/icons/delete.svg" class="icon"/>
+              </button>
+              <button onclick="event.stopPropagation(); editPost('${post.id}')">
+                <img src="../assets/icons/edit.svg" class="icon"/>
+              </button>
             </div>
           </div>
+          </div>
+
+          
+
+          <div class="post-content">
+              
             <p>${post.text}</p>
-            <p>${post.tags}</p>
-            <small>Created By: You<small>
-              <br>
-            <small>${post.like_count} likes</small>
-            <small>${replyCount} replies</small>
+
+
+            <div class="post-meta">
+
+              
+            <div class="action">
+              <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
+              <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+                fill="${liked ? '#0ea5e9' : '#666666'}">
+                <path 
+                  d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
+                  63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
+                  157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"
+                  fill="${liked ? '#0ea5e9' : 'white'}"
+                  stroke="${liked ? 'none' : '#666666'}"
+                  stroke-width="40"
+                />
+              </svg>
+            </button>
+              
+             <span> ${post.like_count} likes</span>
+            </div>
+
+          
+            <div class="action">
+              <button onclick="event.stopPropagation(); replyPost('${post.id}')">
+              <img src="../assets/icons/reply.svg" class="icon""/>
+              </button>
+              
+            <span> ${replyCount} ${replyCount === 1 ? "reply" : "replies"}</span>
+            </div>
+
+
+            </div>
+            
+            </div>
           `;
           postList.appendChild(postCard);
+          postCard.onclick = () => {
+          window.location.href = `/post/post-details.html?id=${post.id}`;
+        };
         }
       };
 
@@ -125,7 +196,7 @@
       }
 
       window.editPost = function (postId) {
-        window.location.href = `./post/update-post.html?id=${postId}`;
+        window.location.href = `/post/update-post.html?id=${postId}`;
       };
 
       window.returnHome = function(){
@@ -159,8 +230,10 @@
       };
 
       window.createPost = function () {
-        window.location.href = "./post/create-post.html";
+        window.location.href = "/post/create-post.html";
       };
     </script>
+    <button class="btn-outline-circle" onclick="createPost()">+</button>  
+  </div>
   </body>
 </html>

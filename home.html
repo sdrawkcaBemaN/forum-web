@@ -7,26 +7,27 @@
     <title>User Web | Forum</title>
   </head>
   <body>
+    <div class="container">
+    <div class="header-border">
     <header>
-      <div class="container">
+      
         <div style="display: flex; justify-content: space-between;">
         <h1>Forum</h1>
-        <h1 class="avatar" id="user"></h1>
+        <button class="avatar" id="user" onclick="viewOwn()" style="width: 36px; height: 36px;"></button>
         </div>
-        
 
-        <div class="btn group">
-          <button class="btn primary" onclick="logout()">Logout</button>
-          <button class="btn primary" onclick="viewOwn()">My Posts</button>
-        </div>
-      </div>
     </header>
+    </div>
 
     <div class="post-box">
     </div>
-    <main class="container">
+    <main>
       <div id="post-list"></div>
-      <button id="load-more" class="btn load-more-btn"><img src="./assets/icons/downarrow.svg" class="icon"/></button>
+      <button id="load-more" class="btn load-more-btn">
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none">
+    <path d="M12 6V18M12 18L7 13M12 18L17 13" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
     </main>
     <script type="module">
       import { checkAuth } from "./src/check-auth.js";
@@ -109,29 +110,32 @@
           postCard.innerHTML = `
           <div class="post-header">
           <div class="avatar">${initials}</div>
-          <strong>${post.user.name}</strong>
+          <p>${post.user.name}</p>
 
           </div>
 
           
 
           <div class="post-content">
-              <br>
-            <strong>${post.title}</strong>
+              
             <p>${post.text}</p>
 
 
             <div class="post-meta">
-            <p>${post.tags}</p>
 
               
             <div class="action">
               <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"
+              <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
                 fill="${liked ? '#0ea5e9' : '#666666'}">
-                <path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
-                63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
-                157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"/>
+                <path 
+                  d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
+                  63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
+                  157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"
+                  fill="${liked ? '#0ea5e9' : 'white'}"
+                  stroke="${liked ? 'none' : '#666666'}"
+                  stroke-width="40"
+                />
               </svg>
             </button>
               
@@ -141,23 +145,12 @@
           
             <div class="action">
               <button onclick="event.stopPropagation(); replyPost('${post.id}')">
-              <img src="./assets/icons/reply.svg" class="icon"/>
+              <img src="./assets/icons/reply.svg" class="icon""/>
               </button>
               
-            <span> ${replyCount} replies</span>
+            <span> ${replyCount} ${replyCount === 1 ? "reply" : "replies"}</span>
             </div>
 
-            <div>
-              ${isUser ? `
-            <button onclick="event.stopPropagation(); removePost('${post.id}')">
-              <img src="./assets/icons/delete.svg" class="icon"/>
-            </button>
-
-            <button onclick="event.stopPropagation(); editPost('${post.id}')">
-              <img src="./assets/icons/edit.svg" class="icon"/>
-            </button>` : ''}
-
-            </div>
 
             </div>
             
@@ -248,5 +241,6 @@
       };
     </script>
     <button class="btn-outline-circle" onclick="createPost()">+</button>
+  </div>
   </body>
 </html>

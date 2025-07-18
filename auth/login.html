@@ -7,7 +7,8 @@
     <title>User Login | Forum</title>
   </head>
   <body>
-    <form class="container" onsubmit="handleSubmit(event)">
+    <div class="container">
+    <form  onsubmit="handleSubmit(event)">
       <div class="input-group">
         <label for="username">Username</label>
         <input name="username" type="text" />
@@ -37,6 +38,7 @@
       </div>
       <button type="submit" class="btn primary">Login</button>
     </form>
+    </div>
 
     <script type="module">
       import { login } from "../src/api/auth.js";
