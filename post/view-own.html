@@ -7,6 +7,8 @@
     <title>User Posts | Forum</title>
   </head>
   <body>
+    
+    <div class="page-wrapper">
     <div class="container">
     <div class="header-border">
     <header>
@@ -29,20 +31,20 @@
 
     </header>
     </div>
-
+    
     <div class="header-border">
     <div style="display: flex; justify-content: space-between; padding: 10px;">
-        <button class="avatar" id="user" onclick="viewOwn()" style="width: 100px; height: 100px; font-size: 20px; font-size: 24px;"></button>
+        <button class="avatar" id="user" onclick="viewOwn()" style="width: 70px; height: 70px; font-size: 20px; font-size: 24px;"></button>
         </div>
 
-        <div style="padding-bottom: 10px;">
-        <small id="name"></small>
-        <h6 id="username"></h6>
+        <div style="padding: 0 16px; padding-bottom: 10px;">
+        <small id="name" ></small>
+        <h6 id="username" style="color: gray;"></h6>
         </div>
     </div>
 
     <div class="post-box">
-      <h2 style="font-size: 15px; display: flex;">Posts</h2>
+      <h2 style="font-size: 15px; display: flex; padding: 0 16px; padding-top: 10px;">Posts</h2>
     </div>
     <main class="container">
       <div id="post-list"></div>
@@ -125,10 +127,23 @@
             </div>
             <div style="display: flex; gap: 10px;">
               <button onclick="event.stopPropagation(); removePost('${post.id}')">
-                <img src="../assets/icons/delete.svg" class="icon"/>
+                <svg xmlns="http://www.w3.org/2000/svg" height="14px" viewBox="0 -960 960 960" width="14px" fill="gray">
+                  <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+                  </svg>
               </button>
               <button onclick="event.stopPropagation(); editPost('${post.id}')">
-                <img src="../assets/icons/edit.svg" class="icon"/>
+
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 528.899 528.899" fill="#808080" style="width: auto; height: 14px; max-height: 14px; max-width: 20px; object-fit: contain;">
+  <path d="M328.883,89.125l107.59,107.589l-272.34,272.34L56.604,361.465L328.883,89.125z M518.113,63.177l-47.981-47.981
+    c-18.543-18.543-48.653-18.543-67.259,0l-45.961,45.961l107.59,107.59l53.611-53.611
+    C532.495,100.753,532.495,77.559,518.113,63.177z M0.3,512.69c-1.958,8.812,5.998,16.708,14.811,14.565l119.891-29.069
+    L27.473,390.597L0.3,512.69z"/>
+</svg>
+
+
+
+                
               </button>
             </div>
           </div>
@@ -146,7 +161,7 @@
               
             <div class="action">
               <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
-              <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+              <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12"
                 fill="${liked ? '#0ea5e9' : '#666666'}">
                 <path 
                   d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
@@ -233,6 +248,7 @@
         window.location.href = "/post/create-post.html";
       };
     </script>
+    </div>
     <button class="btn-outline-circle" onclick="createPost()">+</button>  
   </div>
   </body>

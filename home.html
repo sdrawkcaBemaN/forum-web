@@ -13,7 +13,7 @@
       
         <div style="display: flex; justify-content: space-between;">
         <h1>Forum</h1>
-        <button class="avatar" id="user" onclick="viewOwn()" style="width: 36px; height: 36px;"></button>
+        <button class="avatar" id="user" onclick="viewOwn()" style="width: 36px; height: 36px; font-size: 15px;"></button>
         </div>
 
     </header>
@@ -126,7 +126,7 @@
               
             <div class="action">
               <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
-              <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+              <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12"
                 fill="${liked ? '#0ea5e9' : '#666666'}">
                 <path 
                   d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94

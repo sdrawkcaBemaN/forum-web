@@ -70,7 +70,7 @@
           likePost,
           unlikePost,
         } from "../src/api/posts.js";
-        import { followUser, unfollowUser } from "../src/api/user.js";
+        import { followUser, unfollowUser, followStatus } from "../src/api/user.js";
 
         const urlParams = new URLSearchParams(window.location.search);
         const id = urlParams.get("id");
@@ -91,7 +91,7 @@
         };
 
         window.loadPost = async function () {
-          const { error, data } = await getPost(id);
+          const { error, data } = await followStatus(id);
           const postDetails = document.getElementById("post-details");
           //**************************************************************
 
@@ -104,7 +104,7 @@
           console.log(post);
           const isUser = post.user.id === user.id;
           let liked = false;
-          let following = false;
+          let following = post.is_following_author
           let replyCount = 0;
 
           for (const like of post.likes) {
@@ -136,10 +136,26 @@
           }/${date.getFullYear()}`;
 
           postCard.innerHTML = `
-          <div class="post-header">
+          <div class="post-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 8px;">
           <div class="avatar">${initials}</div>
           <p>${post.user.name}</p>
-          <button onclick="event.stopPropagation();"> follow</button>
+          </div>
+  
+          ${
+            !isUser
+              ? `<button
+                  onclick="event.stopPropagation(); ${
+                    following
+                      ? `unfollowUser('${post.user.id}')`
+                      : `followUser('${post.user.id}')`
+                  }"
+                  class="follow-btn">
+                  ${following ? "Following" : "Follow"}
+                </button>`
+              : ""
+          }
+        
           </div>
 
 
@@ -156,7 +172,7 @@
               <button onclick="event.stopPropagation(); ${
                 liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`
               }">
-              <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16"
+              <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12"
                 fill="${liked ? "#0ea5e9" : "#666666"}">
                 <path
                   d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
