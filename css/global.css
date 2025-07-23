@@ -42,8 +42,6 @@ header {
   width: 100%;
 }
 
-
-
 h1 {
   color: #0ea5e9;
 }
@@ -103,10 +101,20 @@ h1 {
 .input-group label {
   display: block;
   margin-bottom: 6px;
-  color: #000000;
+  color: #555;
+  font-size: 14px;
 }
 
 .input-group input {
+  width: 100%;
+  padding: 0 12px;
+  height: 42px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.input-group textarea {
   width: 100%;
   padding: 10px 8px;
   border: 1px solid #ccc;
@@ -120,8 +128,8 @@ h1 {
 
 .btn {
   width: 100%;
-  padding: 10px 8px;
-  border: 1px solid transparent;
+  padding: 0 12px;
+  height: 42px;
   border-radius: 4px;
   font-size: 1rem;
   display: flex;
@@ -153,9 +161,8 @@ button:focus {
   display: flex;
   justify-content: center;
   padding: 10px 8px;
-  border: 1px solid #ccc;
-  border-radius: 42px;
   font-size: 1rem;
+  border-radius: 4px;
 }
 
 .btn.outline {
@@ -263,4 +270,3 @@ button:focus {
   border-radius: 20px;
   cursor: pointer;
 }
-

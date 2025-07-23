@@ -8,239 +8,253 @@
   </head>
   <body>
     <div class="container">
-    <div class="header-border">
-    <header>
-      
-        <div style="display: flex; justify-content: space-between;">
-        <h1>Forum</h1>
-        <button class="avatar" id="user" onclick="viewOwn()" style="width: 36px; height: 36px; font-size: 15px;"></button>
-        </div>
-
-    </header>
-    </div>
-
-    <div class="post-box">
-    </div>
-    <main>
-      <div id="post-list"></div>
-      <button id="load-more" class="btn load-more-btn">
-  <svg xmlns="http://www.w3.org/2000/svg" class="icon" viewBox="0 0 24 24" fill="none">
-    <path d="M12 6V18M12 18L7 13M12 18L17 13" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-</button>
-    </main>
-    <script type="module">
-      import { checkAuth } from "./src/check-auth.js";
-      import { logout } from "./src/api/auth.js";
-      import {
-        getAll as getPosts,
-        removePost,
-        getUser,
-        likePost,
-        unlikePost,
-        getReplies
-      } from "./src/api/posts.js";
-
-      const userRef = document.getElementById("user");
-      const loadMore = document.getElementById("load-more")
-      let user = null
-      let page = 1
-      let size = 3
-      let total;
-      let loaded = size
-
-      window.onload = async function () {
-        user = await checkAuth(["verified"]);
-        const initials = user.name //get first letters
-          .split(" ")
-          .map(n => n[0])
-          .join("")
-          .toUpperCase();
-
-        if (user) {
-          userRef.innerHTML = initials;
-        } else {
-          window.location.href = "./auth/login.html";
-        }
-
-        await loadPosts();
-      };
-
-      window.loadPosts = async function () {
-        const { error, data, total: postCount } = await getPosts( page, size );
-        const postList = document.getElementById("post-list");
-        //**************************************************************
-
-        total = postCount
-
-        if (error || !data) {
-          postList.innerHTML = "<p>Failed to load posts.</p>";
-          return;
-        }
-
-        postList.innerHTML = "";
-
-
-        for (const post of data) {
-
-          console.log(post);
-          const isUser = post.user.id === user.id
-          let liked;
-          let replyCount = 0
-
-          for (const like of post.likes) {
-            if (like.user_id === user.id) {
-              liked = true;
-              break;
-            }
-          }
-
-          const {error: repliesError, data: repliesData} = await getReplies(post.id);
-          replyCount = repliesData.length
-
-          const postCard = document.createElement("div");
-          postCard.className = "post-card";
-
-          const initials = post.user.name //get first letters
-          .split(" ")
-          .map(n => n[0])
-          .join("")
-          .toUpperCase();
-
-          postCard.innerHTML = `
-          <div class="post-header">
-          <div class="avatar">${initials}</div>
-          <p>${post.user.name}</p>
-
+      <div class="header-border">
+        <header>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <h1 style="font-size: 24px">Forum</h1>
+            <button
+              class="avatar"
+              id="user"
+              onclick="viewOwn()"
+              style="width: 36px; height: 36px; font-size: 15px"
+            ></button>
           </div>
+        </header>
+      </div>
 
-          
+      <div class="post-box"></div>
+      <main>
+        <div id="post-list"></div>
+        <button
+          id="load-more"
+          class="btn"
+          style="width: 42px; padding: 0; margin: 12px auto 0 auto"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            style="width: 24px; height: 24px"
+          >
+            <path
+              d="M12 6V18M12 18L7 13M12 18L17 13"
+              stroke="#0ea5e9"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </main>
+      <script type="module">
+        import { checkAuth } from "./src/check-auth.js";
+        import { logout } from "./src/api/auth.js";
+        import {
+          getAll as getPosts,
+          removePost,
+          getUser,
+          likePost,
+          unlikePost,
+          getReplies,
+        } from "./src/api/posts.js";
 
-          <div class="post-content">
-              
-            <p>${post.text}</p>
+        const userRef = document.getElementById("user");
+        const loadMore = document.getElementById("load-more");
+        let user = null;
+        let page = 1;
+        let size = 3;
+        let total;
+        let loaded = size;
 
+        window.onload = async function () {
+          user = await checkAuth(["verified"]);
+          const initials = user.name //get first letters
+            .split(" ")
+            .map((n) => n[0])
+            .join("")
+            .toUpperCase();
 
-            <div class="post-meta">
-
-              
-            <div class="action">
-              <button onclick="event.stopPropagation(); ${liked ? `unlikePost('${post.id}')` : `likePost('${post.id}')`}">
-              <svg xmlns="http://www.w3.org/2000/svg" height="12" viewBox="0 -960 960 960" width="12"
-                fill="${liked ? '#0ea5e9' : '#666666'}">
-                <path 
-                  d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
-                  63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
-                  157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"
-                  fill="${liked ? '#0ea5e9' : 'white'}"
-                  stroke="${liked ? 'none' : '#666666'}"
-                  stroke-width="40"
-                />
-              </svg>
-            </button>
-              
-             <span> ${post.like_count} likes</span>
-            </div>
-
-          
-            <div class="action">
-              <button onclick="event.stopPropagation(); replyPost('${post.id}')">
-              <img src="./assets/icons/reply.svg" class="icon""/>
-              </button>
-              
-            <span> ${replyCount} ${replyCount === 1 ? "reply" : "replies"}</span>
-            </div>
-
-
-            </div>
-            
-            </div>
-              
-          `;
-          postList.appendChild(postCard);
-          postCard.onclick = () => {
-          window.location.href = `./post/post-details.html?id=${post.id}`;
-        };
-          if(loaded > total){
-            loaded = total
+          if (user) {
+            userRef.innerHTML = initials;
+          } else {
+            window.location.href = "./auth/login.html";
           }
 
-          if (loaded >= total) {
-            loadMore.style.display = "none"; 
+          await loadPosts();
+        };
+
+        window.loadPosts = async function () {
+          const { error, data, total: postCount } = await getPosts(page, size);
+          const postList = document.getElementById("post-list");
+          //**************************************************************
+
+          total = postCount;
+
+          if (error || !data) {
+            postList.innerHTML = "<p>Failed to load posts.</p>";
+            return;
+          }
+
+          postList.innerHTML = "";
+
+          for (const post of data) {
+            console.log(post);
+            const isUser = post.user.id === user.id;
+            let liked;
+            let replyCount = 0;
+
+            for (const like of post.likes) {
+              if (like.user_id === user.id) {
+                liked = true;
+                break;
+              }
+            }
+
+            const { error: repliesError, data: repliesData } = await getReplies(
+              post.id
+            );
+            replyCount = repliesData.length;
+
+            const postCard = document.createElement("div");
+            postCard.className = "post-card";
+
+            const initials = post.user.name //get first letters
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase();
+
+            postCard.innerHTML = `
+              <div class="post-header">
+                <div class="avatar">${initials}</div>
+                <p>${post.user.name}</p>
+              </div>
+
+              <div class="post-content">
+                <p>${post.text}</p>
+
+                <div class="post-meta">
+                  <div class="action">
+                    <button onclick="event.stopPropagation(); ${
+                      liked
+                        ? `unlikePost('${post.id}')`
+                        : `likePost('${post.id}')`
+                    }">
+                      <svg xmlns="http://www.w3.org/2000/svg" height="12" width="12" viewBox="0 -960 960 960"
+                        fill="${liked ? "#0ea5e9" : "#666666"}">
+                        <path
+                          d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94
+                            63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0
+                            157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Z"
+                          fill="${liked ? "#0ea5e9" : "white"}"
+                          stroke="${liked ? "none" : "#666666"}"
+                          stroke-width="40"
+                        />
+                      </svg>
+                    </button>
+                    <span>${post.like_count} likes</span>
+                  </div>
+
+                  <div class="action">
+                    <button onclick="event.stopPropagation(); replyPost('${
+                      post.id
+                    }')">
+                      <img src="./assets/icons/reply.svg" class="icon" />
+                    </button>
+                    <span>${replyCount} ${
+              replyCount === 1 ? "reply" : "replies"
+            }</span>
+                  </div>
+                </div>
+              </div>
+            `;
+            postList.appendChild(postCard);
+            postCard.onclick = () => {
+              window.location.href = `./post/post-details.html?id=${post.id}`;
+            };
+            if (loaded > total) {
+              loaded = total;
+            }
+
+            if (loaded >= total) {
+              loadMore.style.display = "none";
+            } else {
+              loadMore.style.display = "block";
+            }
+            console.log(loaded);
+            console.log(total);
+          }
+        };
+
+        window.removePost = async function (postId) {
+          const confirmed = confirm("Delete this post?");
+          if (!confirmed) return;
+          console.log(postId);
+          const { error } = await removePost(postId);
+
+          if (error) {
+            alert("failed to remove post");
           } else {
-            loadMore.style.display = "block"; 
-          }  
-          console.log(loaded)
-          console.log(total)
-          
-        }
-      };
+            loadPosts();
+          }
+        };
 
-      window.removePost = async function (postId) {
-        const confirmed = confirm("Delete this post?");
-        if (!confirmed) return;
-        console.log(postId);
-        const { error } = await removePost(postId);
+        window.likePost = async function (postId) {
+          const { error } = await likePost(postId);
+          if (error) {
+            alert("Failed to like post.");
+            return;
+          }
+          await loadPosts();
+        };
 
-        if (error) {
-          alert("failed to remove post");
-        } else {
+        window.unlikePost = async function (postId) {
+          const { error } = await unlikePost(postId);
+          if (error) {
+            alert("Failed to unlike post.");
+            return;
+          }
+          await loadPosts();
+        };
+
+        //doom scroll approach using size || book thing use page
+        loadMore.addEventListener("click", () => {
+          size += 3; //page += 1;
+          loaded += 3; //loaded +=size
           loadPosts();
-        }
-      };
+        });
 
-      window.likePost = async function (postId) {
-        const { error } = await likePost(postId);
-        if (error) {
-          alert("Failed to like post.");
-          return;
-        }
-        await loadPosts();
-      };
+        window.editPost = function (postId) {
+          window.location.href = `./post/update-post.html?id=${postId}`;
+        };
 
-      window.unlikePost = async function (postId) {
-        const { error } = await unlikePost(postId);
-        if (error) {
-          alert("Failed to unlike post.");
-          return;
-        }
-        await loadPosts();
-      };
+        window.replyPost = function (postId) {
+          window.location.href = `./post/reply-post.html?id=${postId}`;
+        };
 
+        window.viewOwn = function () {
+          window.location.href = `./post/view-own.html`;
+        };
 
-      //doom scroll approach using size || book thing use page
-      loadMore.addEventListener("click", () => {
-        size += 3;  //page += 1;
-        loaded += 3  //loaded +=size
-        loadPosts();
-      });
+        window.logout = async function () {
+          const { error } = await logout();
 
+          if (!error) {
+            window.location.href = "./auth/login.html";
+          }
+        };
 
-      window.editPost = function (postId) {
-        window.location.href = `./post/update-post.html?id=${postId}`;
-      };
-
-      window.replyPost = function (postId) {
-        window.location.href = `./post/reply-post.html?id=${postId}`;
-      };
-
-      window.viewOwn = function () {
-        window.location.href = `./post/view-own.html`;
-      };
-
-      window.logout = async function () {
-        const { error } = await logout();
-
-        if (!error) {
-          window.location.href = "./auth/login.html";
-        }
-      };
-
-      window.createPost = function () {
-        window.location.href = "./post/create-post.html";
-      };
-    </script>
-    <button class="btn-outline-circle" onclick="createPost()">+</button>
-  </div>
+        window.createPost = function () {
+          window.location.href = "./post/create-post.html";
+        };
+      </script>
+      <button class="btn-outline-circle" onclick="createPost()">+</button>
+    </div>
   </body>
 </html>
